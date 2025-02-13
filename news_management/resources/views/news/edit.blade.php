@@ -20,9 +20,7 @@
 
         <div class="mb-3">
             <label for="content" class="form-label">Contenu :</label>
-            <!-- Champ caché qui contiendra le HTML généré par Trix -->
             <input id="content" type="hidden" name="content" value="{{ $news->content }}">
-            <!-- Éditeur Trix -->
             <trix-editor input="content"></trix-editor>
         </div>
 
@@ -38,9 +36,19 @@
             </select>
         </div>
 
+        <!-- Gestion des images -->
         <div class="mb-3">
             <label for="image" class="form-label">Image :</label>
             <input type="file" name="image" class="form-control">
+            
+            <!-- Affichage de l'image existante -->
+            @if($news->image)
+                <div class="mt-2">
+                    <p>Image actuelle :</p>
+                    <img src="{{ asset('storage/' . $news->image) }}" alt="Image actuelle" width="200">
+                    <input type="checkbox" name="delete_image" value="1"> Supprimer l’image
+                </div>
+            @endif
         </div>
 
         <button type="submit" class="btn btn-success">Mettre à jour</button>
@@ -49,7 +57,7 @@
 </div>
 
 @push('scripts')
-<!-- Inclusion de Trix depuis le CDN -->
+<!-- Importation de Trix -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/trix/1.3.1/trix.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/trix/1.3.1/trix.min.js"></script>
 
@@ -57,6 +65,8 @@
 document.addEventListener("trix-attachment-add", function(event) {
     let attachment = event.attachment;
     if (attachment.file) {
+        console.log("🚀 Trix détecte un fichier :", attachment.file);
+
         let formData = new FormData();
         formData.append("file", attachment.file);
         formData.append("_token", "{{ csrf_token() }}");
@@ -68,16 +78,21 @@ document.addEventListener("trix-attachment-add", function(event) {
         .then(response => response.json())
         .then(data => {
             if (data.url) {
-                // Mettez à jour l'attachement Trix avec l'URL retournée par le serveur
-                attachment.setAttributes({ 
+                console.log("✅ Image envoyée avec succès :", data.url);
+                attachment.setAttributes({
                     url: data.url,
                     href: data.url
                 });
+
+                // Supprimer le nom et la taille affichés dans Trix
+                setTimeout(() => {
+                    document.querySelectorAll("figcaption").forEach(el => el.remove());
+                }, 100);
             } else {
-                console.error("Upload failed:", data.error);
+                console.error("❌ Erreur côté serveur :", data.error);
             }
         })
-        .catch(error => console.error("Upload error:", error));
+        .catch(error => console.error("❌ Erreur de requête Fetch :", error));
     }
 });
 </script>
