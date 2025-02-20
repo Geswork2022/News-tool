@@ -32,7 +32,7 @@
             <!-- Champ caché qui recevra le HTML généré par Quill -->
             <input id="content" type="hidden" name="content" value="{{ $news->content ?? '' }}">
             <!-- Conteneur pour l'éditeur Quill -->
-            <div id="editor-container" style="height: 300px;">{!! $news->content ?? '' !!}</div>
+            <div id="editor-container" style="height: 400px;">{!! $news->content ?? '' !!}</div>
         </div>
 
         <!-- Catégorie -->

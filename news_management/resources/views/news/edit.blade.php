@@ -24,7 +24,7 @@
         <div class="mb-3">
             <label for="content" class="form-label">Contenu :</label>
             <input id="content" type="hidden" name="content" value="{{ $news->content }}">
-            <div id="editor-container" style="height: 300px;">{!! $news->content !!}</div>
+            <div id="editor-container" style="height: 400px;">{!! $news->content !!}</div>
         </div>
 
         <!-- Catégorie -->
