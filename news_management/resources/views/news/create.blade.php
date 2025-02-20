@@ -26,11 +26,13 @@
                    value="{{ $news->short_description ?? '' }}" required>
         </div>
 
-        <!-- Contenu (Trix) -->
+        <!-- Contenu (Quill Editor) -->
         <div class="mb-3">
             <label for="content" class="form-label">Contenu :</label>
+            <!-- Champ caché qui recevra le HTML généré par Quill -->
             <input id="content" type="hidden" name="content" value="{{ $news->content ?? '' }}">
-            <trix-editor input="content"></trix-editor>
+            <!-- Conteneur pour l'éditeur Quill -->
+            <div id="editor-container" style="height: 300px;">{!! $news->content ?? '' !!}</div>
         </div>
 
         <!-- Catégorie -->
@@ -63,97 +65,74 @@
 @endsection
 
 @push('scripts')
-<!-- 1) Importation de Trix depuis le CDN -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/trix/1.3.1/trix.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/trix/1.3.1/trix.min.js"></script>
-
-<!-- 2) Gestion de l'upload des fichiers via Trix -->
 <script>
-(function() {
-    var HOST = "{{ route('upload.attachment') }}"; // Laravel traitera l'upload
+  // Configuration de la toolbar pour Quill
+  var toolbarOptions = [
+    ['bold', 'italic', 'underline', 'strike'],
+    ['blockquote', 'code-block'],
+    [{ 'header': 1 }, { 'header': 2 }],
+    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+    [{ 'script': 'sub' }, { 'script': 'super' }],
+    [{ 'indent': '-1' }, { 'indent': '+1' }],
+    [{ 'direction': 'rtl' }],
+    [{ 'size': ['small', false, 'large', 'huge'] }],
+    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+    [{ 'color': [] }, { 'background': [] }],
+    [{ 'font': [] }],
+    [{ 'align': [] }],
+    ['clean'],
+    ['link', 'image', 'video']
+  ];
 
-    addEventListener("trix-attachment-add", function(event) {
-        if (event.attachment.file) {
-            uploadFileAttachment(event.attachment)
-        }
-    });
+  // Gestionnaire personnalisé pour l'insertion d'image
+  function imageHandler() {
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', 'image/*');
+    input.click();
 
-    function uploadFileAttachment(attachment) {
-        uploadFile(attachment.file, setProgress, setAttributes);
-
-        function setProgress(progress) {
-            attachment.setUploadProgress(progress);
-        }
-
-        function setAttributes(attributes) {
-            attachment.setAttributes(attributes);
-        }
-    }
-
-    function uploadFile(file, progressCallback, successCallback) {
-        let formData = new FormData();
-        formData.append("file", file);
-        formData.append("_token", "{{ csrf_token() }}");
-
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", HOST, true);
-
-        xhr.upload.addEventListener("progress", function(event) {
-            var progress = (event.loaded / event.total) * 100;
-            progressCallback(progress);
-        });
-
-        xhr.addEventListener("load", function(event) {
-            if (xhr.status === 200) {
-                var json = JSON.parse(xhr.responseText);
-                if (json.url) {
-                    successCallback({
-                        url: json.url,
-                        href: json.url
-                    });
-                }
-            }
-        });
-
-        xhr.send(formData);
-    }
-})();
-</script>
-
-@push('scripts')
-<!-- Importation de Trix -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/trix/1.3.1/trix.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/trix/1.3.1/trix.min.js"></script>
-
-<script>
-document.addEventListener("trix-attachment-add", function(event) {
-    let attachment = event.attachment;
-    if (attachment.file) {
-        console.log("🚀 Trix détecte un fichier : ", attachment.file);
-
-        let formData = new FormData();
-        formData.append("file", attachment.file);
-        formData.append("_token", "{{ csrf_token() }}");
+    input.onchange = () => {
+      const file = input.files[0];
+      if (file) {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('_token', "{{ csrf_token() }}");
 
         fetch("{{ route('upload.attachment') }}", {
-            method: "POST",
-            body: formData
+          method: "POST",
+          body: formData
         })
         .then(response => response.json())
         .then(data => {
-            if (data.url) {
-                console.log("✅ Image envoyée avec succès :", data.url);
-                attachment.setAttributes({
-                    url: data.url,
-                    href: data.url
-                });
-            } else {
-                console.error("❌ Erreur côté serveur :", data.error);
-            }
+          if (data.url) {
+            let range = quill.getSelection();
+            quill.insertEmbed(range.index, 'image', data.url);
+          } else {
+            console.error("Erreur d'upload:", data.error);
+          }
         })
-        .catch(error => console.error("❌ Erreur de requête Fetch :", error));
-    }
-});
-</script>
+        .catch(error => console.error('Erreur de requête:', error));
+      }
+    };
+  }
 
+  // Initialisation de l'éditeur Quill
+  var quill = new Quill('#editor-container', {
+    theme: 'snow',
+    modules: {
+      toolbar: {
+        container: toolbarOptions,
+        handlers: {
+          image: imageHandler
+        }
+      },
+      imageResize: {}
+    }
+  });
+
+  // Synchronisation du contenu de Quill avec le champ caché lors de la soumission du formulaire
+  document.querySelector('form').addEventListener('submit', function() {
+    document.getElementById('content').value = quill.root.innerHTML;
+  });
+</script>
 @endpush
