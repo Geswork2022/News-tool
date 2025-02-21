@@ -4,14 +4,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\NewsViewController;
 
-Route::prefix('api')->group(function () {
-    Route::get('/news', [NewsController::class, 'index']);
-    Route::get('/news/{id}', [NewsController::class, 'show']);
-    Route::post('/news', [NewsController::class, 'store']);
-    Route::put('/news/{id}', [NewsController::class, 'update']);
-    Route::delete('/news/{id}', [NewsController::class, 'destroy']);
-});
-
 // Page d'accueil
 Route::get('/', function () {
     return response()->json(['message' => 'Bienvenue sur l\'API News!']);

@@ -47,6 +47,10 @@
 
 <!-- Style pour assurer un bon affichage des images et fichiers Trix -->
 <style>
+  .trix-content {
+    max-width: 100%;       /* Pour ne pas déborder en largeur */
+    overflow-y: auto;      /* Scroll si ça dépasse */
+  }
   .trix-content img {
     max-width: 100%;
     height: auto;
