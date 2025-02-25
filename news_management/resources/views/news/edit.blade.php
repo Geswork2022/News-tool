@@ -3,7 +3,7 @@
 @section('content')
 <div class="container mt-5">
     <h1 class="mb-4">✏️ Modifier la News</h1>
-    
+
     <form action="{{ route('news.update', $news->id) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
@@ -20,11 +20,12 @@
             <input type="text" name="short_description" class="form-control" value="{{ $news->short_description }}" required>
         </div>
 
-        <!-- Contenu (Quill Editor) -->
+        <!-- Contenu (CKEditor 5) -->
         <div class="mb-3">
             <label for="content" class="form-label">Contenu :</label>
-            <input id="content" type="hidden" name="content" value="{{ $news->content }}">
-            <div id="editor-container" style="height: 400px;">{!! $news->content !!}</div>
+            <textarea id="editor" name="content" class="form-control" rows="10" required>
+                {{ $news->content }}
+            </textarea>
         </div>
 
         <!-- Catégorie -->
@@ -44,7 +45,7 @@
         <div class="mb-3">
             <label for="image" class="form-label">Image :</label>
             <input type="file" name="image" class="form-control">
-            
+
             <!-- Affichage de l'image existante -->
             @if($news->image)
                 <div class="mt-2">
@@ -59,73 +60,4 @@
         <a href="{{ route('news.index') }}" class="btn btn-secondary">Annuler</a>
     </form>
 </div>
-
-@push('scripts')
-<script>
-  var toolbarOptions = [
-    ['bold', 'italic', 'underline', 'strike'],
-    ['blockquote', 'code-block'],
-    [{ 'header': 1 }, { 'header': 2 }],
-    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-    [{ 'script': 'sub' }, { 'script': 'super' }],
-    [{ 'indent': '-1' }, { 'indent': '+1' }],
-    [{ 'direction': 'rtl' }],
-    [{ 'size': ['small', false, 'large', 'huge'] }],
-    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-    [{ 'color': [] }, { 'background': [] }],
-    [{ 'font': [] }],
-    [{ 'align': [] }],
-    ['clean'],
-    ['link', 'image', 'video']
-  ];
-
-  function imageHandler() {
-    const input = document.createElement('input');
-    input.setAttribute('type', 'file');
-    input.setAttribute('accept', 'image/*');
-    input.click();
-
-    input.onchange = () => {
-      const file = input.files[0];
-      if (file) {
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('_token', "{{ csrf_token() }}");
-
-        fetch("{{ route('upload.attachment') }}", {
-          method: "POST",
-          body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data.url) {
-            let range = quill.getSelection();
-            quill.insertEmbed(range.index, 'image', data.url);
-          } else {
-            console.error("Erreur d'upload:", data.error);
-          }
-        })
-        .catch(error => console.error('Erreur de requête:', error));
-      }
-    };
-  }
-
-  var quill = new Quill('#editor-container', {
-    theme: 'snow',
-    modules: {
-      toolbar: {
-        container: toolbarOptions,
-        handlers: {
-          image: imageHandler
-        }
-      },
-      imageResize: {}
-    }
-  });
-
-  document.querySelector('form').addEventListener('submit', function() {
-    document.getElementById('content').value = quill.root.innerHTML;
-  });
-</script>
-@endpush
 @endsection

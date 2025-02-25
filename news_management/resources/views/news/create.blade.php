@@ -1,14 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
-@if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
-  @vite(['resources/js/editor.js'])
-@endif
+<!-- @vite(['resources/js/editor.js']) -->
 <div class="container mt-5">
     <h1 class="mb-4">
         {{ isset($news) ? '✏️ Modifier la News' : '➕ Ajouter une News' }}
     </h1>
-    
+
     <form action="{{ isset($news) ? route('news.update', $news->id) : route('news.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         @if(isset($news))
@@ -18,7 +16,7 @@
         <!-- Titre -->
         <div class="mb-3">
             <label for="title" class="form-label">Titre :</label>
-            <input type="text" name="title" class="form-control" 
+            <input type="text" name="title" class="form-control"
                    value="{{ $news->title ?? '' }}" required>
         </div>
 
@@ -29,13 +27,12 @@
                    value="{{ $news->short_description ?? '' }}" required>
         </div>
 
-        <!-- Contenu (Quill Editor) -->
+        <!-- Contenu (CKEditor 5) -->
         <div class="mb-3">
             <label for="content" class="form-label">Contenu :</label>
-            <!-- Champ caché qui recevra le HTML généré par Quill -->
-            <input id="content" type="hidden" name="content" value="{{ $news->content ?? '' }}">
-            <!-- Conteneur pour l'éditeur Quill -->
-            <div id="editor-container" style="height: 400px;">{!! $news->content ?? '' !!}</div>
+            <textarea id="editor" name="content" class="form-control" rows="10" required>
+                {{ $news->content ?? '' }}
+            </textarea>
         </div>
 
         <!-- Catégorie -->

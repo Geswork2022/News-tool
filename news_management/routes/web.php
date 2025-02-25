@@ -19,7 +19,5 @@ Route::middleware(['web'])->group(function () {
     Route::put('/news/{id}', [NewsViewController::class, 'update'])->name('news.update');
     Route::delete('/news/{id}', [NewsViewController::class, 'destroy'])->name('news.destroy');
 
-    // Route pour l'upload de fichiers via Trix Editor
-    Route::post('/upload-attachment', [NewsViewController::class, 'uploadTrixFile'])
-        ->name('upload.attachment');
+    Route::post('/upload-attachment', [NewsViewController::class, 'uploadAttachment'])->name('upload.attachment');
 });

@@ -3,20 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+
   <title>@yield('title', 'Gestion des News')</title>
-  
+
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-  
-  <!-- Quill Editor CSS (v1.3.6) -->
-  <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/quill/2.0.0-dev.3/quill.snow.min.css" rel="stylesheet">
-  <link href="https://unpkg.com/quill-better-table@1.2.8/dist/quill-better-table.css" rel="stylesheet">
-  
   <!-- jQuery UI CSS -->
   <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
-  
+
   <style>
     .ui-resizable-s {
       height: 10px;
@@ -84,36 +80,100 @@
 
   <!-- jQuery -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  
+
   <!-- jQuery UI JS -->
   <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
-  
+
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  
-  <!-- Quill JS (v1.3.6) -->
-  <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 
-  <!-- quill-better-table -->
-  <script src="https://unpkg.com/quill-better-table@1.2.9/dist/quill-better-table.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/quill/2.0.0-dev.3/quill.min.js" type="text/javascript"></script>
-  
-  <!-- Module pour redimensionner les images -->
-  <script src="https://cdn.jsdelivr.net/npm/quill-image-resize-module@3.0.0/image-resize.min.js"></script>
-  
-  <!-- Script pour rendre le conteneur de l'éditeur redimensionnable -->
+  <!-- CKEditor 5 -->
+  <script src="https://cdn.ckeditor.com/ckeditor5/38.1.1/classic/ckeditor.js"></script>
+
+  <!-- Script pour rendre le conteneur de l'éditeur redimensionnable et configurer l'adaptateur de téléchargement -->
   <script>
     $(document).ready(function(){
-      if($('#editor-container').length){
+      if ($('#editor-container').length) {
         $('#editor-container').resizable({
           handles: "s",
           minHeight: 400,
           maxHeight: 800
         });
       }
+
+      function MyCustomUploadAdapterPlugin(editor) {
+        editor.plugins.get('FileRepository').createUploadAdapter = function (loader) {
+          return new CustomUploadAdapter(loader);
+        };
+      }
+
+      class CustomUploadAdapter {
+        constructor(loader) {
+          this.loader = loader;
+        }
+
+        upload() {
+          return this.loader.file
+            .then(file => new Promise((resolve, reject) => {
+              this._initRequest();
+              this._initListeners(resolve, reject, file);
+              this._sendRequest(file);
+            }));
+        }
+
+        abort() {
+          if (this.xhr) {
+            this.xhr.abort();
+          }
+        }
+
+        _initRequest() {
+          const xhr = this.xhr = new XMLHttpRequest();
+          xhr.open('POST', "{{ route('upload.attachment') }}", true);
+          xhr.setRequestHeader('X-CSRF-TOKEN', "{{ csrf_token() }}");
+          xhr.responseType = 'json';
+        }
+
+        _initListeners(resolve, reject, file) {
+          this.xhr.addEventListener('error', () => reject(file));
+          this.xhr.addEventListener('abort', () => reject());
+          this.xhr.addEventListener('load', () => {
+            const response = this.xhr.response;
+            if (!response || response.error) {
+              return reject(response && response.error ? response.error : 'Upload failed');
+            }
+            resolve({
+              default: response.url
+            });
+          });
+
+          if (this.xhr.upload) {
+            this.xhr.upload.addEventListener('progress', evt => {
+              if (evt.lengthComputable) {
+                this.loader.uploadTotal = evt.total;
+                this.loader.uploaded = evt.loaded;
+              }
+            });
+          }
+        }
+
+        _sendRequest(file) {
+          const data = new FormData();
+          data.append('upload', file);
+          this.xhr.send(data);
+        }
+      }
+
+      ClassicEditor
+        .create(document.querySelector('#editor'), {
+          extraPlugins: [MyCustomUploadAdapterPlugin],
+        })
+        .catch(error => {
+          console.error(error);
+        });
     });
   </script>
-  
+
   @stack('scripts')
 </body>
 </html>

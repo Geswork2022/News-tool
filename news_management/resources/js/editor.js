@@ -1,6 +1,7 @@
-import QuillBetterTable from 'quill-better-table';
+// import Quill from 'quill';
+// import QuillBetterTable from 'quill-better-table';
 
-Quill.register('modules/better-table', QuillBetterTable);
+// Quill.register('modules/better-table', QuillBetterTable);
   // Configuration de la toolbar pour Quill
   var toolbarOptions = [
     ['bold', 'italic', 'underline', 'strike'],
@@ -71,7 +72,7 @@ Quill.register('modules/better-table', QuillBetterTable);
             }
           }
         },
-      imageResize: {}
+      // imageResize: {}
     }
   });
 
@@ -79,3 +80,9 @@ Quill.register('modules/better-table', QuillBetterTable);
   document.querySelector('form').addEventListener('submit', function() {
     document.getElementById('content').value = quill.root.innerHTML;
   });
+
+  document.body.querySelector('#insert-table')
+    .onclick = () => {
+      let tableModule = quill.getModule('better-table')
+      tableModule.insertTable(3, 3)
+    }

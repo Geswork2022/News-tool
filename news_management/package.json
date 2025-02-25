@@ -15,8 +15,6 @@
         "vite": "^6.0.11"
     },
     "dependencies": {
-        "@ckeditor/ckeditor5-build-classic": "^44.1.0",
-        "tinymce": "^7.6.1",
-        "trix": "^2.1.12"
+        "@ckeditor/ckeditor5-build-classic": "^44.1.0"
     }
 }
