@@ -21,12 +21,12 @@
       cursor: ns-resize;
     }
 
-    .bg-bordeaux {
-      background-color: #416795 !important;
+    .bg-color {
+      background-color: #494949 !important;
     }
 
     .navbar-custom {
-      background-color: #416795 !important;
+      background-color: #494949 !important;
     }
 
     html, body {
@@ -83,7 +83,7 @@
     @yield('content')
   </div>
 
-  <footer class="bg-bordeaux text-light py-4">
+  <footer class="bg-color text-light py-4">
     <div class="container text-center">
       <p class="mb-0">&copy; {{ date('Y') }}.</p>
     </div>

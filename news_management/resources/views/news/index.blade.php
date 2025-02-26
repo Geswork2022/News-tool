@@ -4,7 +4,7 @@
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="fw-bold">📰 Dernières News</h1>
-        <a href="{{ route('news.create') }}" class="btn btn-lg shadow-sm" style="background-color: #416795; color: white; transition: transform 0.2s;" onmouseover="this.style.backgroundColor='#36557a'; this.style.transform='scale(1.05)'" onmouseout="this.style.backgroundColor='#416795'; this.style.transform='scale(1)'">
+        <a href="{{ route('news.create') }}" class="btn btn-lg shadow-sm" style="background-color: #494949; color: white; transition: transform 0.2s, background-color 0.2s;" onmouseover="this.style.backgroundColor='#3a3a3a'; this.style.transform='scale(1.05)'" onmouseout="this.style.backgroundColor='#494949'; this.style.transform='scale(1)'">
             ➕ Ajouter une News
         </a>
     </div>
