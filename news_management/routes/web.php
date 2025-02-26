@@ -20,4 +20,10 @@ Route::middleware(['web'])->group(function () {
     Route::delete('/news/{id}', [NewsViewController::class, 'destroy'])->name('news.destroy');
 
     Route::post('/upload-attachment', [NewsViewController::class, 'uploadAttachment'])->name('upload.attachment');
+
+    // Route pour filtrer les news par produit
+    Route::get('/products/{id}', [NewsViewController::class, 'newsByProduct'])->name('news.by.product');
+    
+    // Nouvelle route pour afficher le détail d'un produit et ses catégories
+    Route::get('/product/{id}', [NewsViewController::class, 'showProduct'])->name('products.show');
 });

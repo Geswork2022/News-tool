@@ -9,5 +9,10 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'description', 'price']; // Mets les champs nécessaires
+    protected $fillable = ['name', 'description']; // Mets les champs nécessaires
+
+    public function categories()
+    {
+        return $this->hasMany(Category::class);
+    }
 }
