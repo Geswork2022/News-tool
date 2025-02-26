@@ -48,6 +48,9 @@
                         <p class="card-text text-muted">
                             {{ Str::limit($article->short_description, 100) }}
                         </p>
+                        <p class="card-text">
+                            Produit: {{ $article->product->name ?? 'Aucun produit' }}
+                        </p>
                     </div>
                     <div class="card-footer bg-white d-flex justify-content-between">
                         <small class="text-muted">
