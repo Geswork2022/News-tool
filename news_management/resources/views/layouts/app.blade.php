@@ -66,6 +66,17 @@
       </div>
     </div>
   </nav>
+  <style>
+    .navbar-nav .nav-link {
+      transition: color 0.3s ease, background-color 0.3s ease;
+    }
+
+    .navbar-nav .nav-link:hover {
+      color: #ffffff;
+      background-color: transparent;
+      transform: translateY(-2px);
+    }
+  </style>
 
   <!-- Contenu principal -->
   <div id="main-content" class="container mt-4 mb-5">

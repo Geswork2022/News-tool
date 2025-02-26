@@ -4,17 +4,17 @@
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="fw-bold">📰 Dernières News</h1>
-        <a href="{{ route('news.create') }}" class="btn btn-primary btn-lg shadow-sm">
+        <a href="{{ route('news.create') }}" class="btn btn-lg shadow-sm" style="background-color: #416795; color: white; transition: transform 0.2s;" onmouseover="this.style.backgroundColor='#36557a'; this.style.transform='scale(1.05)'" onmouseout="this.style.backgroundColor='#416795'; this.style.transform='scale(1)'">
             ➕ Ajouter une News
         </a>
     </div>
 
     <!-- Début du formulaire de filtre par produit -->
     <form method="GET" action="{{ route('news.index') }}" class="mb-4">
-        <div class="row">
+        <div class="row g-3 align-items-center">
             <div class="col-md-3">
-                <label for="product_id" class="form-label">Filtrer par produit</label>
-                <select name="product_id" id="product_id" class="form-select" onchange="this.form.submit()">
+                <label for="product_id" class="form-label fw-bold">Filtrer par produit</label>
+                <select name="product_id" id="product_id" class="form-select shadow-sm" style="transition: background-color 0.2s;" onchange="this.form.submit()" onmouseover="this.style.backgroundColor='#f0f0f0';" onmouseout="this.style.backgroundColor='white';">
                     <option value="">-- Tous les produits --</option>
                     @foreach($products as $product)
                         <option value="{{ $product->id }}"
@@ -31,7 +31,7 @@
     <div class="row">
         @foreach($news as $article)
             <div class="col-md-4 mb-4">
-                <div class="card shadow-lg border-0 rounded position-relative">
+                <div class="card shadow-lg border-0 rounded position-relative" style="transition: transform 0.3s, box-shadow 0.3s;" onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 4px 20px rgba(0, 0, 0, 0.2)';" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 1px 3px rgba(0, 0, 0, 0.1)';">
                     <a href="{{ route('news.show', $article->id) }}">
                         <img src="{{ asset('storage/'.$article->image) }}"
                              class="card-img-top"
@@ -58,7 +58,10 @@
                         </small>
                         <div>
                             <a href="{{ route('news.edit', $article->id) }}"
-                               class="btn btn-warning btn-sm">
+                               class="btn btn-warning btn-sm"
+                               style="transition: transform 0.2s, background-color 0.2s;"
+                               onmouseover="this.style.transform='scale(1.1)'; this.style.backgroundColor='#e0a800';"
+                               onmouseout="this.style.transform='scale(1)'; this.style.backgroundColor='#ffc107';">
                                 <i class="fas fa-edit"></i> Modifier
                             </a>
                             <form action="{{ route('news.destroy', $article->id) }}"
@@ -67,7 +70,10 @@
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit"
-                                        class="btn btn-danger btn-sm">
+                                        class="btn btn-danger btn-sm"
+                                        style="transition: transform 0.2s, background-color 0.2s;"
+                                        onmouseover="this.style.transform='scale(1.1)'; this.style.backgroundColor='#c82333';"
+                                        onmouseout="this.style.transform='scale(1)'; this.style.backgroundColor='#dc3545';">
                                     <i class="fas fa-trash"></i> Supprimer
                                 </button>
                             </form>
