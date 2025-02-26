@@ -22,11 +22,11 @@
     }
 
     .bg-bordeaux {
-      background-color: #800000 !important;
+      background-color: #416795 !important;
     }
 
     .navbar-custom {
-      background-color: #800000 !important;
+      background-color: #416795 !important;
     }
 
     html, body {
