@@ -4,7 +4,6 @@
 <div class="container mt-5">
     <h1 class="mb-4">News pour le produit : {{ $product->name }}</h1>
 
-    <!-- Dropdown for product selection -->
     <form method="GET" action="{{ route('news.product') }}" class="mb-4">
         <div class="form-group">
             <label for="product">Choisir un produit:</label>
@@ -19,7 +18,6 @@
         <div class="row">
             @foreach($news as $article)
                 <div class="col-md-4 mb-4">
-                    <!-- Carte similaire à votre index.blade.php -->
                     <div class="card shadow-lg border-0 rounded">
                         <a href="{{ route('news.show', $article->id) }}">
                             <img src="{{ asset('storage/'.$article->image) }}"
@@ -46,7 +44,6 @@
         <p>Aucune news disponible pour ce produit.</p>
     @endif
 
-    <!-- Lien pour revenir à la liste complète -->
     <a href="{{ route('news.index') }}" class="btn btn-secondary mt-3">Retour à toutes les news</a>
 </div>
 @endsection

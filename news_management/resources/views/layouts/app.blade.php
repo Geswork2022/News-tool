@@ -7,10 +7,7 @@
 
   <title>@yield('title', 'Gestion des News')</title>
 
-  <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-
-  <!-- jQuery UI CSS -->
   <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
 
   <style>
@@ -78,7 +75,6 @@
     }
   </style>
 
-  <!-- Contenu principal -->
   <div id="main-content" class="container mt-4 mb-5">
     @yield('content')
   </div>
@@ -89,19 +85,11 @@
     </div>
   </footer>
 
-  <!-- jQuery -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-  <!-- jQuery UI JS -->
   <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
-
-  <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-  <!-- CKEditor 5 -->
   <script src="https://cdn.ckeditor.com/ckeditor5/38.1.1/classic/ckeditor.js"></script>
 
-  <!-- Script pour rendre le conteneur de l'éditeur redimensionnable et configurer l'adaptateur de téléchargement -->
   <script>
     $(document).ready(function(){
       if ($('#editor-container').length) {

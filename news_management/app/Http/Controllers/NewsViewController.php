@@ -14,8 +14,8 @@ class NewsViewController extends Controller
     public function index(Request $request)
     {
         $products = Product::all();
+        $categories = Category::all();
         $query = News::query();
-        // Filtre par recherche
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function($q) use ($search) {
@@ -24,12 +24,14 @@ class NewsViewController extends Controller
                 ->orWhere('content', 'like', "%$search%");
             });
         }
-        // Filtre par produit
         if ($request->filled('product_id')) {
             $query->where('product_id', $request->product_id);
         }
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
         $news = $query->get();
-        return view('news.index', compact('news', 'products'));
+        return view('news.index', compact('news', 'products', 'categories'));
     }
 
     public function create()
@@ -49,14 +51,10 @@ class NewsViewController extends Controller
             'product_id'        => 'nullable|exists:products,id',
             'image'             => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
-
-        // Gestion de l'image
         $imagePath = null;
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('news_images', 'public');
         }
-
-        // Génération d'un slug unique pour éviter la contrainte d'unicité
         $slugBase = Str::slug($request->title);
         $slug     = $slugBase;
         $counter  = 1;
@@ -80,7 +78,6 @@ class NewsViewController extends Controller
 
     public function show($id)
     {
-        // Charger la relation 'product' pour pouvoir faire $news->product->name
         $news = News::with('product.categories')->findOrFail($id);
         return view('news.show', compact('news'));
     }
@@ -89,7 +86,6 @@ class NewsViewController extends Controller
     {
         $news = News::findOrFail($id);
         $categories = Category::all();
-        // Récupérer aussi les produits pour pouvoir modifier le produit associé
         $products = Product::all();
 
         return view('news.edit', compact('news', 'categories', 'products'));
@@ -107,8 +103,6 @@ class NewsViewController extends Controller
             'product_id'        => 'nullable|exists:products,id',
             'image'             => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
-
-        // Vérifier si le titre a changé => regénérer le slug si besoin
         if ($news->title !== $request->title) {
             $slugBase = Str::slug($request->title);
             $slug     = $slugBase;
@@ -120,17 +114,13 @@ class NewsViewController extends Controller
             }
             $news->slug = $slug;
         }
-
-        // Mettre à jour les champs
         $news->title             = $request->title;
         $news->short_description = $request->short_description;
         $news->content           = $request->content;
         $news->category_id       = $request->category_id;
         $news->product_id        = $request->product_id;
 
-        // Gérer l'image
         if ($request->hasFile('image')) {
-            // Supprimer l'ancienne image si existante
             if ($news->image) {
                 Storage::disk('public')->delete($news->image);
             }
@@ -165,19 +155,15 @@ class NewsViewController extends Controller
         $file = $request->file('upload');
         \Log::info('📂 Fichier reçu : ' . $file->getClientOriginalName());
 
-        // Validation du fichier
         $request->validate([
             'upload' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         try {
-            // Créer le dossier "uploads" s'il n'existe pas
             if (!Storage::disk('public')->exists('uploads')) {
                 \Log::warning('⚠️ Le dossier "uploads" n\'existe pas, tentative de création...');
                 Storage::disk('public')->makeDirectory('uploads');
             }
-
-            // Stocker l'image
             $path = $file->store('uploads', 'public');
             \Log::info('✅ Image stockée à : ' . $path);
 
@@ -185,8 +171,6 @@ class NewsViewController extends Controller
                 \Log::error('❌ Fichier introuvable après stockage : ' . $path);
                 return response()->json(['error' => 'Erreur de stockage'], 500);
             }
-
-            // Générer l'URL
             $url = asset('storage/' . $path);
             \Log::info('🌍 URL de l\'image : ' . $url);
 
@@ -199,19 +183,13 @@ class NewsViewController extends Controller
 
     public function newsByProduct($productId)
     {
-        // 1. Récupérer le produit
         $product = Product::findOrFail($productId);
-
-        // 2. Récupérer les news associées
         $news = News::where('product_id', $productId)->get();
-
-        // 3. Retourner une vue (par ex. news.by_product) avec ces données
         return view('news.by_product', compact('product', 'news'));
     }
 
     public function showProduct($id)
     {
-        // Récupère le produit avec ses catégories via eager loading
         $product = Product::with('categories')->findOrFail($id);
         return view('products.show', compact('product'));
     }

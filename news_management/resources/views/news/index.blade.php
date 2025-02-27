@@ -9,7 +9,7 @@
         </a>
     </div>
 
-    <!-- Début du formulaire de filtre par produit -->
+    <!-- Formulaire de filtre par produit et catégorie -->
     <form method="GET" action="{{ route('news.index') }}" class="mb-4">
         <div class="row g-3 align-items-center">
             <div class="col-md-3">
@@ -24,9 +24,20 @@
                     @endforeach
                 </select>
             </div>
+            <div class="col-md-3">
+                <label for="category_id" class="form-label fw-bold">Filtrer par catégorie</label>
+                <select name="category_id" id="category_id" class="form-select shadow-sm" style="transition: background-color 0.2s;" onchange="this.form.submit()" onmouseover="this.style.backgroundColor='#f0f0f0';" onmouseout="this.style.backgroundColor='white';">
+                    <option value="">-- Toutes les catégories --</option>
+                    @foreach($categories as $category)
+                        <option value="{{ $category->id }}"
+                            {{ request('category_id') == $category->id ? 'selected' : '' }}>
+                            {{ $category->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
         </div>
     </form>
-    <!-- Fin du formulaire de filtre par produit -->
 
     <div class="row">
         @foreach($news as $article)

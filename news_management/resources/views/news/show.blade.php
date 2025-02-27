@@ -13,13 +13,11 @@
 
         <div class="card-body p-5">
           <h2 class="mb-3 text-dark fw-bold text-center">📰 {{ $news->title }}</h2>
-          
-          <!-- Description courte -->
+
           <p class="text-muted text-center">
             <strong>Description :</strong> {{ $news->short_description }}
           </p>
           
-          <!-- Produit associé -->
           <p class="text-muted text-center">
             <strong>Produit :</strong> 
             @if($news->product)
@@ -35,7 +33,6 @@
           </p>
           <hr>
 
-          <!-- Contenu principal -->
           <div class="trix-content p-4 bg-light rounded border">
             {!! str_replace('/storage/app/public/', '/storage/', $news->content) !!}
           </div>
@@ -88,7 +85,6 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  // Confirmation de suppression
   document.querySelectorAll('.delete-form').forEach(form => {
     form.addEventListener('submit', function(e) {
       e.preventDefault();
@@ -97,8 +93,6 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   });
-
-  // Vérification que les images insérées via Trix existent bien
   document.querySelectorAll('.trix-content img').forEach(img => {
     img.onerror = function() {
       console.error("L'image ne peut pas être chargée :", this.src);
