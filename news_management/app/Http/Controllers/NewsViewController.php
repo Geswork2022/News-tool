@@ -182,11 +182,22 @@ class NewsViewController extends Controller
     }
 
     public function newsByProduct($productId)
-    {
-        $product = Product::findOrFail($productId);
-        $news = News::where('product_id', $productId)->get();
-        return view('news.by_product', compact('product', 'news'));
+{
+    $product = Product::find($productId);
+
+    if (!$product) {
+        return response()->json(['message' => 'Produit non trouvé.'], 404);
     }
+    $news = News::where('product_id', $productId)->get();
+    if ($news->isEmpty()) {
+        return response()->json(['message' => 'Aucune news trouvée pour ce produit.'], 404);
+    }
+    return response()->json([
+        'product' => $product,
+        'news' => $news
+    ]);
+}
+
 
     public function showProduct($id)
     {

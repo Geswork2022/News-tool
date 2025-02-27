@@ -19,4 +19,5 @@ Route::middleware(['web'])->group(function () {
     Route::post('/upload-attachment', [NewsViewController::class, 'uploadAttachment'])->name('upload.attachment');
     Route::get('/products/{id}', [NewsViewController::class, 'newsByProduct'])->name('news.by.product');
     Route::get('/product/{id}', [NewsViewController::class, 'showProduct'])->name('products.show');
+    Route::get('/products/{id}/news', [NewsViewController::class, 'newsByProduct'])->name('news.by.product');
 });
