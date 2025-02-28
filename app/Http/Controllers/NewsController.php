@@ -13,7 +13,7 @@ class NewsController extends Controller
         $news = News::all();
         foreach ($news as $new) {
             $new->short_content = substr($new->content, 0, 100);
-            $new->full_url = "https://intranet.geswork.fr/".$new->image;
+            $new->full_url = "https://intranet.geswork.fr/storage/".$new->image;
         }
         return response()->json($news);
     }
