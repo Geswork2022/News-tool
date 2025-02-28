@@ -7,7 +7,7 @@
       <div class="card shadow-lg border-0 rounded overflow-hidden">
         @if($news->image)
           <div class="image-container" style="max-height: 400px; overflow: hidden;">
-            <img src="{{ asset('storage/'.$news->image) }}" class="w-100 img-fluid" style="object-fit: cover; height: 400px;" alt="{{ $news->title }}">
+            <img src="{{ url('storage/'.$news->image) }}" class="w-100 img-fluid" style="object-fit: cover; height: 400px;" alt="{{ $news->title }}">
           </div>
         @endif
 

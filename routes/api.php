@@ -8,8 +8,8 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::post('/news', [NewsController::class, 'index']);
-Route::get('/news/{id}', [NewsController::class, 'show']);
-Route::post('/news', [NewsController::class, 'store']);
-Route::put('/news/{id}', [NewsController::class, 'update']);
-Route::delete('/news/{id}', [NewsController::class, 'destroy']);
+Route::get('/news', [NewsViewController::class, 'index']); // Ajout du GET pour lister les news
+Route::get('/news/{id}', [NewsViewController::class, 'show']);
+Route::post('/news', [NewsViewController::class, 'store']);
+Route::put('/news/{id}', [NewsViewController::class, 'update']);
+Route::delete('/news/{id}', [NewsViewController::class, 'destroy']);
