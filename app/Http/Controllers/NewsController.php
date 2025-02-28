@@ -58,4 +58,10 @@ class NewsController extends Controller
         News::destroy($id);
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }
+
+    public function showBySlug($slug)
+    {
+        $news = News::where('slug', $slug)->firstOrFail();
+        return response()->json($news);
+    }
 }
