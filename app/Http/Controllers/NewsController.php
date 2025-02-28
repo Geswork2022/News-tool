@@ -10,7 +10,11 @@ class NewsController extends Controller
 {
     public function index()
     {
-        return response()->json(News::all());
+        $news = News::all();
+        foreach ($news as $new) {
+            $new->short_content = substr($new->content, 0, 100);
+        }
+        return response()->json($news);
     }
 
     public function show($id)
