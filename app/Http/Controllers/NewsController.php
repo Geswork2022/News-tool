@@ -21,6 +21,7 @@ class NewsController extends Controller
     public function show($id)
     {
         $news = News::findOrFail($id);
+        $news->full_url = "https://intranet.geswork.fr/storage/".$news->image;
         return response()->json($news);
     }
 
