@@ -21,7 +21,9 @@ class NewsController extends Controller
     public function show($id)
     {
         $news = News::findOrFail($id);
-        $news->full_url = "https://intranet.geswork.fr/storage/".$news->image;
+        $news->full_url = !empty($news->image) 
+            ? "https://intranet.geswork.fr/storage/" . $news->image 
+            : null;
         return response()->json($news);
     }
 
@@ -63,6 +65,9 @@ class NewsController extends Controller
     public function showBySlug($slug)
     {
         $news = News::where('slug', $slug)->firstOrFail();
+        $news->full_url = !empty($news->image) 
+            ? "https://intranet.geswork.fr/storage/" . $news->image 
+            : null;
         return response()->json($news);
     }
 }
