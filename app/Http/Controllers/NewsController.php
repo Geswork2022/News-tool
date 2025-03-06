@@ -8,8 +8,12 @@ use Illuminate\Http\Response;
 
 class NewsController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $query = News::query();
+        if($request->has('product_id')) {
+            $query->where('product_id', $request->input('product_id'));
+        }
         $news = News::all();
         foreach ($news as $new) {
             $new->short_content = substr($new->content, 0, 100);
@@ -69,5 +73,12 @@ class NewsController extends Controller
             ? "https://intranet.geswork.fr/storage/" . $news->image 
             : null;
         return response()->json($news);
+    }
+
+    public function create()
+    {
+        $categories = Category::all(); // Récupère toutes les catégories
+        $products = Product::all(); // Récupère tous les produits
+        return view('news.create', compact('categories', 'products'));
     }
 }
