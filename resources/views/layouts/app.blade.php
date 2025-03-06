@@ -85,91 +85,36 @@
     </div>
   </footer>
 
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://cdn.ckeditor.com/ckeditor5/38.1.1/classic/ckeditor.js"></script>
-
+  <script src="https://cdn.tiny.cloud/1/wticqdjmvfdwlhslw7qbagus8he5ft72h1ekenj5ayc7430m/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
   <script>
-    $(document).ready(function(){
-      if ($('#editor-container').length) {
-        $('#editor-container').resizable({
-          handles: "s",
-          minHeight: 400,
-          maxHeight: 800
+    tinymce.init({
+      selector: 'textarea',
+      plugins: 'advlist autolink lists link image charmap print preview hr anchor pagebreak',
+      toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | link image | upload',
+      toolbar_mode: 'floating',
+      setup: function (editor) {
+        editor.ui.registry.addButton('upload', {
+          icon: 'upload',
+          tooltip: 'Upload Attachment',
+          onAction: function () {
+            var input = document.createElement('input');
+            input.setAttribute('type', 'file');
+            input.setAttribute('accept', 'image/*');
+            input.click();
+            input.onchange = function () {
+              var file = input.files[0];
+              var reader = new FileReader();
+              reader.onload = function (e) {
+                var img = new Image();
+                img.src = e.target.result;
+                editor.insertContent('<img src="' + img.src + '"/>');
+              };
+              reader.readAsDataURL(file);
+            };
+          }
         });
       }
-
-      function MyCustomUploadAdapterPlugin(editor) {
-        editor.plugins.get('FileRepository').createUploadAdapter = function (loader) {
-          return new CustomUploadAdapter(loader);
-        };
-      }
-
-      class CustomUploadAdapter {
-        constructor(loader) {
-          this.loader = loader;
-        }
-
-        upload() {
-          return this.loader.file
-            .then(file => new Promise((resolve, reject) => {
-              this._initRequest();
-              this._initListeners(resolve, reject, file);
-              this._sendRequest(file);
-            }));
-        }
-
-        abort() {
-          if (this.xhr) {
-            this.xhr.abort();
-          }
-        }
-
-        _initRequest() {
-          const xhr = this.xhr = new XMLHttpRequest();
-          xhr.open('POST', "{{ route('upload.attachment') }}", true);
-          xhr.setRequestHeader('X-CSRF-TOKEN', "{{ csrf_token() }}");
-          xhr.responseType = 'json';
-        }
-
-        _initListeners(resolve, reject, file) {
-          this.xhr.addEventListener('error', () => reject(file));
-          this.xhr.addEventListener('abort', () => reject());
-          this.xhr.addEventListener('load', () => {
-            const response = this.xhr.response;
-            if (!response || response.error) {
-              return reject(response && response.error ? response.error : 'Upload failed');
-            }
-            resolve({
-              default: response.url
-            });
-          });
-
-          if (this.xhr.upload) {
-            this.xhr.upload.addEventListener('progress', evt => {
-              if (evt.lengthComputable) {
-                this.loader.uploadTotal = evt.total;
-                this.loader.uploaded = evt.loaded;
-              }
-            });
-          }
-        }
-
-        _sendRequest(file) {
-          const data = new FormData();
-          data.append('upload', file);
-          this.xhr.send(data);
-        }
-      }
-
-      ClassicEditor
-        .create(document.querySelector('#editor'), {
-          extraPlugins: [MyCustomUploadAdapterPlugin],
-        })
-        .catch(error => {
-          console.error(error);
-        });
     });
   </script>
 
