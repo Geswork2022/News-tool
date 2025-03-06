@@ -14,7 +14,7 @@ class NewsController extends Controller
         if($request->has('product_id')) {
             $query->where('product_id', $request->input('product_id'));
         }
-        $news = News::all();
+        $news = $query->get();
         foreach ($news as $new) {
             $new->short_content = substr($new->content, 0, 100);
             $new->full_url = "https://intranet.geswork.fr/storage/".$new->image;
@@ -39,6 +39,7 @@ class NewsController extends Controller
             'short_description' => 'required|string',
             'content' => 'required',
             'image' => 'nullable|string',
+            'product_id' => 'required|integer',
         ]);
 
         $news = News::create($validated);
@@ -54,6 +55,7 @@ class NewsController extends Controller
             'short_description' => 'sometimes|string',
             'content' => 'sometimes',
             'image' => 'nullable|string',
+            'product_id' => 'sometimes|integer',
         ]);
 
         $news->update($validated);
