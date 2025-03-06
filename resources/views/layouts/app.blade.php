@@ -90,8 +90,8 @@
   <script>
     tinymce.init({
       selector: 'textarea',
-      plugins: 'advlist autolink lists link image charmap print preview hr anchor pagebreak',
-      toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | link image | upload',
+      plugins: 'advlist autolink lists link image charmap print preview hr anchor pagebreak table',
+      toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | link image | table | upload',
       toolbar_mode: 'floating',
       setup: function (editor) {
         editor.ui.registry.addButton('upload', {
