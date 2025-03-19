@@ -43,35 +43,56 @@ class NewsViewController extends Controller
 
     public function store(Request $request)
     {
+        \Log::info('✅ Début de la création d\'une news.');
+
         $request->validate([
             'title'             => 'required',
             'short_description' => 'required',
             'content'           => 'required',
             'category_id'       => 'nullable|exists:categories,id',
             'product_id'        => 'nullable|exists:products,id',
-            'image'             => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+            'image'             => 'nullable|image|mimes:jpeg,png,jpg,gif|max:4096',
+            'promotional_message' => 'nullable',
         ]);
+
+        \Log::info('📋 Données validées : ', $request->all());
+
         $imagePath = null;
         if ($request->hasFile('image')) {
+            \Log::info('📂 Image reçue : ' . $request->file('image')->getClientOriginalName());
             $imagePath = $request->file('image')->store('news_images', 'public');
+            \Log::info('✅ Image stockée à : ' . $imagePath);
         }
+
         $slugBase = Str::slug($request->title);
         $slug     = $slugBase;
         $counter  = 1;
+
         while (News::where('slug', $slug)->exists()) {
+            \Log::warning('⚠️ Slug déjà existant : ' . $slug);
             $slug = $slugBase . '-' . $counter;
             $counter++;
         }
 
-        News::create([
-            'title'             => $request->title,
-            'slug'              => $slug,
-            'short_description' => $request->short_description,
-            'content'           => $request->content,
-            'category_id'       => $request->category_id,
-            'product_id'        => $request->product_id,
-            'image'             => $imagePath
-        ]);
+        \Log::info('✅ Slug généré : ' . $slug);
+
+        try {
+            News::create([
+                'title'             => $request->title,
+                'slug'              => $slug,
+                'short_description' => $request->short_description,
+                'content'           => $request->content,
+                'category_id'       => $request->category_id,
+                'product_id'        => $request->product_id,
+                'image'             => $imagePath,
+                'promotional_message' => $request->promotional_message,
+            ]);
+
+            \Log::info('✅ News créée avec succès.');
+        } catch (\Exception $e) {
+            \Log::error('❌ Erreur lors de la création de la news : ' . $e->getMessage());
+            return redirect()->route('news.index')->with('error', 'Erreur lors de l\'ajout de la news.');
+        }
 
         return redirect()->route('news.index')->with('success', 'News ajoutée avec succès !');
     }
@@ -101,8 +122,10 @@ class NewsViewController extends Controller
             'content'           => 'required',
             'category_id'       => 'nullable|exists:categories,id',
             'product_id'        => 'nullable|exists:products,id',
-            'image'             => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+            'image'             => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'promotional_message' => 'nullable',
         ]);
+
         if ($news->title !== $request->title) {
             $slugBase = Str::slug($request->title);
             $slug     = $slugBase;
@@ -114,11 +137,13 @@ class NewsViewController extends Controller
             }
             $news->slug = $slug;
         }
+
         $news->title             = $request->title;
         $news->short_description = $request->short_description;
         $news->content           = $request->content;
         $news->category_id       = $request->category_id;
         $news->product_id        = $request->product_id;
+        $news->promotional_message = $request->promotional_message;
 
         if ($request->hasFile('image')) {
             if ($news->image) {
@@ -184,7 +209,7 @@ class NewsViewController extends Controller
     public function newsByProduct($productId)
     {
         $product = Product::find($productId);
-        
+
         if (!$product) {
             return response()->json(['message' => 'Produit non trouvé.'], 404);
         }

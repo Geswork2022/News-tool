@@ -2,62 +2,58 @@
 
 @section('content')
 <div class="container mt-5">
-  <div class="row justify-content-center">
-    <div class="col-md-10">
-      <div class="card shadow-lg border-0 rounded overflow-hidden">
-        @if($news->image)
-          <div class="image-container" style="max-height: 400px; overflow: hidden;">
-            <img src="{{ url('storage/'.$news->image) }}" class="w-100 img-fluid" style="object-fit: cover; height: 400px;" alt="{{ $news->title }}">
-          </div>
-        @endif
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow-lg border-0 rounded overflow-hidden">
+                @if($news->image)
+                <div class="image-container" style="max-height: 400px; overflow: hidden;">
+                    <img src="{{ url('storage/'.$news->image) }}" class="w-100 img-fluid" style="object-fit: cover; height: 400px;" alt="{{ $news->title }}">
+                </div>
+                @endif
+                <div class="card-body p-5">
+                    <h2 class="mb-3 text-dark fw-bold text-center">📰 {{ $news->title }}</h2>
+                    <p class="text-muted text-center">
+                        <strong>Description :</strong> {{ $news->short_description }}
+                    </p>
+                    <p class="text-muted text-center">
+                        <strong>Produit :</strong>
+                        @if($news->product)
+                        {{ $news->product->name }}
+                        @else
+                        Aucun produit associé
+                        @endif
+                    </p>
+                <hr>
 
-        <div class="card-body p-5">
-          <h2 class="mb-3 text-dark fw-bold text-center">📰 {{ $news->title }}</h2>
+                <div class="trix-content p-4 bg-light rounded border">
+                    {!! str_replace('/storage/app/public/', '/storage/', $news->content) !!}
+                </div>
 
-          <p class="text-muted text-center">
-            <strong>Description :</strong> {{ $news->short_description }}
-          </p>
-          
-          <p class="text-muted text-center">
-            <strong>Produit :</strong> 
-            @if($news->product)
-              {{ $news->product->name }}
-              {{-- Lien vers la page du produit (optionnel) si vous avez une route "products.show" --}}
-              {{-- <br>
-              <a href="{{ route('products.show', $news->product->id) }}">
-                Voir plus sur le produit
-              </a> --}}
-            @else
-              Aucun produit associé
-            @endif
-          </p>
-          <hr>
+                @if($news->promotional_message)
+                <div class="promotional-block mt-4 p-4 bg-light rounded border">
+                    <p class="text-muted">{!! $news->promotional_message !!}</p>
+                </div>
+                @endif
 
-          <div class="trix-content p-4 bg-light rounded border">
-            {!! str_replace('/storage/app/public/', '/storage/', $news->content) !!}
-          </div>
+                </div>
+                <div class="card-footer bg-white d-flex justify-content-between align-items-center py-3">
+                    <a href="{{ route('news.index') }}" class="btn btn-outline-secondary">⬅ Retour à la liste</a>
+                    <div>
+                        <a href="{{ route('news.edit', $news->id) }}" class="btn btn-warning">
+                            <i class="fas fa-edit"></i> Modifier
+                        </a>
+                        <form action="{{ route('news.destroy', $news->id) }}" method="POST" class="d-inline delete-form">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash"></i> Supprimer
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <div class="card-footer bg-white d-flex justify-content-between align-items-center py-3">
-          <a href="{{ route('news.index') }}" class="btn btn-outline-secondary">⬅ Retour à la liste</a>
-          <div>
-            <a href="{{ route('news.edit', $news->id) }}" class="btn btn-warning">
-              <i class="fas fa-edit"></i> Modifier
-            </a>
-            <form action="{{ route('news.destroy', $news->id) }}" method="POST" class="d-inline delete-form">
-              @csrf
-              @method('DELETE')
-              <button type="submit" class="btn btn-danger">
-                <i class="fas fa-trash"></i> Supprimer
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
-
-      {{-- <pre>{{ htmlspecialchars($news->content) }}</pre> --}}
     </div>
-  </div>
 </div>
 
 <style>

@@ -20,11 +20,18 @@
             <input type="text" name="short_description" class="form-control" value="{{ $news->short_description }}" required>
         </div>
 
-        <!-- Contenu (CKEditor 5) -->
+        <!-- Contenu -->
         <div class="mb-3">
             <label for="content" class="form-label">Contenu :</label>
             <textarea id="editor" name="content" class="form-control" rows="10" required>
                 {{ $news->content }}
+            </textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="promotional_message" class="form-label">Message promotionnel :</label>
+            <textarea id="promotional_message" name="promotional_message" class="form-control" rows="3">
+                {{ $news->promotional_message ?? '' }}
             </textarea>
         </div>
 

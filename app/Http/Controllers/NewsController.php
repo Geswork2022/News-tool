@@ -25,8 +25,8 @@ class NewsController extends Controller
     public function show($id)
     {
         $news = News::findOrFail($id);
-        $news->full_url = !empty($news->image) 
-            ? "https://intranet.geswork.fr/storage/" . $news->image 
+        $news->full_url = !empty($news->image)
+            ? "https://intranet.geswork.fr/storage/" . $news->image
             : null;
         return response()->json($news);
     }
@@ -38,6 +38,7 @@ class NewsController extends Controller
             'slug' => 'required|string|unique:news,slug',
             'short_description' => 'required|string',
             'content' => 'required',
+            'promotional_message' => 'nullable|string',
             'image' => 'nullable|string',
             'product_id' => 'required|integer',
         ]);
@@ -71,8 +72,8 @@ class NewsController extends Controller
     public function showBySlug($slug)
     {
         $news = News::where('slug', $slug)->firstOrFail();
-        $news->full_url = !empty($news->image) 
-            ? "https://intranet.geswork.fr/storage/" . $news->image 
+        $news->full_url = !empty($news->image)
+            ? "https://intranet.geswork.fr/storage/" . $news->image
             : null;
         return response()->json($news);
     }
