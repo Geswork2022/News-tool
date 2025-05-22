@@ -10,6 +10,7 @@
             <select name="product" id="product" class="form-control" onchange="this.form.submit()">
                 <option value="Geswork" {{ request('product') == 'Geswork' ? 'selected' : '' }}>Geswork</option>
                 <option value="Presencia" {{ request('product') == 'Presencia' ? 'selected' : '' }}>Presencia</option>
+                <option value="Valideo" {{ request('product') == 'Valideo' ? 'selected' : '' }}>Valideo</option>
             </select>
         </div>
     </form>
